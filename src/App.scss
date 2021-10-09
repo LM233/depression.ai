@@ -2,11 +2,32 @@
 @use "@material/line-ripple/mdc-line-ripple";
 @use "@material/notched-outline/mdc-notched-outline";
 @use "@material/textfield";
+@use "@material/fab";
 
+@include fab.core-styles;
 @include textfield.core-styles;
 
-.mdc-text-field {
-  position: absolute;
-  top: 500px;
-  left: 600px;
+.demo {
+  width: 50%;
+  margin-left: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mdc-text-field--filled {
+  height: 56px;
+  width: 400px;
+}
+
+.mdc-fab {
+  height: 75px;
+  width: 75px;
+  position: relative;
+  left: 200px;
+  bottom: 100px;
+}
+
+.input {
+  margin-top: 450px;
 }

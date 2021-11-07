@@ -57,7 +57,10 @@ const getTooltipDataAttrs = (value) => {
 function App() {
   const [value, setValue] = useState([]);
   const [score, setScore] = useState(0);
-  const [text, setText] = useState("emo");
+  const [text, setText] = useState("");
+  const [playStatus, setPlayStatus] = useState(false);
+  const [music] = useState(new Audio(host + "music"));
+
   useEffect(() => {
     setValue(generateRandomValues(310));
     console.log(value);
@@ -67,6 +70,7 @@ function App() {
     textField.getValue = (res) => console.log(res);
     const fabRipple = new MDCRipple(document.querySelector(".mdc-fab"));
   }, []);
+
   return (
     <div className="App">
       <Helmet>
@@ -85,7 +89,7 @@ function App() {
           <canvas id="live2d" width="800" height="800"></canvas>
         </div>
         <div class="number">
-          <div class="title">负面分数</div>
+          <div class="title">悲伤程度</div>
           <h4>
             <AnimatedNumber
               style={{
@@ -106,7 +110,7 @@ function App() {
           <label class="mdc-text-field mdc-text-field--filled">
             <span class="mdc-text-field__ripple"></span>
             <span class="mdc-floating-label" id="my-label-id">
-              Hint text
+              今日负面言论
             </span>
             <input
               class="mdc-text-field__input"
@@ -137,7 +141,7 @@ function App() {
                 if (res.pos > res.neg) {
                   result = 0;
                 } else {
-                  result = Math.tanh(res.data.neg / 15) * 100;
+                  result = Math.tanh(res.data.neg / 20) * 100;
                 }
                 setScore(parseFloat(result.toFixed(1)));
               });
@@ -147,7 +151,17 @@ function App() {
             <span class="material-icons md-48">emoji_emotions</span>
             <div class="mdc-fab__touch"></div>
           </button>
-          <button class="mdc-fab mdc-fab--mini mdc-fab--touch music-button">
+          <button
+            class="mdc-fab mdc-fab--mini mdc-fab--touch music-button"
+            onClick={() => {
+              if (!playStatus) {
+                music.play();
+              } else {
+                music.pause();
+              }
+              setPlayStatus(!playStatus);
+            }}
+          >
             <div class="mdc-fab__ripple"></div>
             <span class="material-icons md-48">library_music</span>
             <div class="mdc-fab__touch"></div>

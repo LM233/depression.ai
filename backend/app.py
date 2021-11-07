@@ -1,10 +1,11 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from cnsenti import Sentiment
 
 senti = Sentiment()
 app = Flask(__name__)
+# 下面这句话的含义尚不明确，这个地址是指什么？#
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
@@ -31,6 +32,12 @@ def score_handler():
         'pos': float(result['pos']),
         'neg': float(result['neg'])
     }
+
+@app.route('/music', methods=['POST', 'GET'])
+def music_handler():
+    return send_file('./audio_resource/Lovestory.mp3')
+def music_name():
+    return {"name":"something"}
 
 if __name__ == "__main__":
     app.run(debug=True)

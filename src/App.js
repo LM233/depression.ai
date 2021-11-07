@@ -8,6 +8,12 @@ import CalendarHeatmap from "react-calendar-heatmap";
 import AnimatedNumber from "react-animated-number";
 import ReactTooltip from "react-tooltip";
 
+const axios = require("axios").default;
+const host = "http://127.0.0.1:5000/";
+
+// require("@tensorflow/tfjs");
+// const toxicity = require("@tensorflow-models/toxicity");
+
 const shiftDate = (date, numDays) => {
   const newDate = new Date(date);
   newDate.setDate(newDate.getDate() + numDays);
@@ -50,12 +56,15 @@ const getTooltipDataAttrs = (value) => {
 
 function App() {
   const [value, setValue] = useState([]);
+  const [score, setScore] = useState(0);
+  const [text, setText] = useState("emo");
   useEffect(() => {
-    setValue(generateRandomValues(290));
+    setValue(generateRandomValues(310));
     console.log(value);
     const textField = new MDCTextField(
       document.querySelector(".mdc-text-field")
     );
+    textField.getValue = (res) => console.log(res);
     const fabRipple = new MDCRipple(document.querySelector(".mdc-fab"));
   }, []);
   return (
@@ -76,7 +85,7 @@ function App() {
           <canvas id="live2d" width="800" height="800"></canvas>
         </div>
         <div class="number">
-          <div class="title">负面程度</div>
+          <div class="title">负面分数</div>
           <h4>
             <AnimatedNumber
               style={{
@@ -88,7 +97,7 @@ function App() {
                 perc === 100 ? {} : { backgroundColor: "#ffffff" }
               }
               stepPrecision={0}
-              value={100}
+              value={score}
               formatValue={(n) => n}
             />
           </h4>
@@ -103,12 +112,37 @@ function App() {
               class="mdc-text-field__input"
               type="text"
               aria-labelledby="my-label-id"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
             ></input>
             <span class="mdc-line-ripple"></span>
           </label>
         </div>
         <div class="mdc-touch-target-wrapper">
-          <button class="mdc-fab mdc-fab--mini mdc-fab--touch emo-button">
+          <button
+            class="mdc-fab mdc-fab--mini mdc-fab--touch emo-button"
+            onClick={() => {
+              axios({
+                method: "post",
+                url: host + "score",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                data: {
+                  text: text,
+                },
+              }).then((res) => {
+                let result = 0;
+                console.log(res.data);
+                if (res.pos > res.neg) {
+                  result = 0;
+                } else {
+                  result = Math.tanh(res.data.neg / 15) * 100;
+                }
+                setScore(parseFloat(result.toFixed(1)));
+              });
+            }}
+          >
             <div class="mdc-fab__ripple"></div>
             <span class="material-icons md-48">emoji_emotions</span>
             <div class="mdc-fab__touch"></div>
